@@ -29,9 +29,10 @@ Offer me a coffee license: use the code as you wish, but offer me a coffee :)
 
 Fork Update
 -------
+Sep. 2020  Zhao Zhigang (zzg2005)
 
-Added support for Compatible with dhclient and dhcpstarv within the existing framework. Modified the bug that exists when DHCP resources are used up.
+Added support for compatible with Dhclient and Dhcpstarv based on the current framework. 
+Modified the bug that exists when DHCP resources are used up.
 
-Zhao Zhigang (zzg2005)
 
 
