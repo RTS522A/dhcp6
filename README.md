@@ -27,3 +27,11 @@ Copyright 2014 - Emanuele Acri
 Offer me a coffee license: use the code as you wish, but offer me a coffee :)
 
 
+Fork Update
+-------
+
+Added support for Compatible with dhclient and dhcpstarv within the existing framework. Modified the bug that exists when DHCP resources are used up.
+
+Zhao Zhigang (zzg2005)
+
+
