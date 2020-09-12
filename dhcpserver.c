@@ -246,8 +246,73 @@ fill_dhcp_reply (dhcp_msg *request, dhcp_msg *reply,
 
 	if (requested_opts)
 	    fill_requested_dhcp_options(requested_opts, &reply->opts);
-    }
+
+    requested_opts = search_option(&reply->opts, SUBNET_MASK);
+
+        if (!requested_opts) {
+        dhcp_option *opt = search_option(&pool.options, SUBNET_MASK);
+        
+        if (opt)
+            append_option(&reply->opts, opt);
+        }  
+
+    requested_opts = search_option(&reply->opts, ROUTER);
+
+        if (!requested_opts) {
+        dhcp_option *opt = search_option(&pool.options, ROUTER);
+        
+        if (opt)
+            append_option(&reply->opts, opt);
+        }          
+
+    requested_opts = search_option(&reply->opts, DOMAIN_NAME_SERVER);
+
+        if (!requested_opts) {
+        dhcp_option *opt = search_option(&pool.options, DOMAIN_NAME_SERVER);
+        
+        if (opt)
+            append_option(&reply->opts, opt);
+        }  
+
+    requested_opts = search_option(&reply->opts, DOMAIN_NAME);
+
+        if (!requested_opts) {
+        dhcp_option *opt = search_option(&pool.options, DOMAIN_NAME);
+        
+        if (opt)
+            append_option(&reply->opts, opt);
+        }  
+
+
+    requested_opts = search_option(&reply->opts, IP_ADDRESS_LEASE_TIME);
+
+        if (!requested_opts) {
+        dhcp_option *opt = search_option(&pool.options, IP_ADDRESS_LEASE_TIME);
+        
+        if (opt)
+            append_option(&reply->opts, opt);
+        }          
     
+
+    requested_opts = search_option(&reply->opts, RENEWAL_T1_TIME_VALUE);
+
+        if (!requested_opts) {
+        dhcp_option *opt = search_option(&pool.options, RENEWAL_T1_TIME_VALUE);
+        
+        if (opt)
+            append_option(&reply->opts, opt);
+        }      
+
+    requested_opts = search_option(&reply->opts, REBINDING_T2_TIME_VALUE);
+
+        if (!requested_opts) {
+        dhcp_option *opt = search_option(&pool.options, REBINDING_T2_TIME_VALUE);
+        
+        if (opt)
+            append_option(&reply->opts, opt);
+        }                     
+    
+    }      
     return type;
 }
 
@@ -256,15 +321,16 @@ serve_dhcp_discover (dhcp_msg *request, dhcp_msg *reply)
 {  
     address_binding *binding = search_binding(&pool.bindings, request->hdr.chaddr,
 					      request->hdr.hlen, STATIC, EMPTY);
+    //log_info("Serve dhcp_discover for %s",str_mac(request->hdr.chaddr)); 
 
     if (binding) { // a static binding has been configured for this client
 
-        log_info("Offer %s to %s (static), %s status %sexpired",
+        log_info("Offer 1: %s to %s (static), %s status %sexpired",
                  str_ip(binding->address), str_mac(request->hdr.chaddr),
                  str_status(binding->status),
                  binding->binding_time + binding->lease_time < time(NULL) ? "" : "not ");
             
-        if (binding->binding_time + binding->lease_time < time(NULL)) {
+        if (binding->binding_time + binding->lease_time < time(NULL) || binding->status == RELEASED ) {
 	    binding->status = PENDING;
 	    binding->binding_time = time(NULL);
 	    binding->lease_time = pool.pending_time;
@@ -281,7 +347,6 @@ serve_dhcp_discover (dhcp_msg *request, dhcp_msg *reply)
 
 	binding = search_binding(&pool.bindings, request->hdr.chaddr,
 				 request->hdr.hlen, DYNAMIC, EMPTY);
-
         if (binding) {
 
             /* The client's current address as recorded in the client's current
@@ -291,12 +356,12 @@ serve_dhcp_discover (dhcp_msg *request, dhcp_msg *reply)
                expired or released) binding, if that address is in the server's
                pool of available addresses and not already allocated, ELSE */
 
-	    log_info("Offer %s to %s, %s status %sexpired",
+	    log_info("Offer 2:%s to %s, %s status %sexpired",
 		     str_ip(binding->address), str_mac(request->hdr.chaddr),
 		     str_status(binding->status),
 		     binding->binding_time + binding->lease_time < time(NULL) ? "" : "not ");
 
-	    if (binding->binding_time + binding->lease_time < time(NULL)) {
+	    if (binding->binding_time + binding->lease_time < time(NULL) || binding->status == RELEASED  ) {
 		binding->status = PENDING;
 		binding->binding_time = time(NULL);
 		binding->lease_time = pool.pending_time;
@@ -324,7 +389,6 @@ serve_dhcp_discover (dhcp_msg *request, dhcp_msg *reply)
 	    
 	    binding = new_dynamic_binding(&pool.bindings, &pool.indexes, address,
 					  request->hdr.chaddr, request->hdr.hlen);
-
 	    if (binding == NULL) {
 		log_info("Can not offer an address to %s, no address available.",
 			 str_mac(request->hdr.chaddr));
@@ -332,12 +396,12 @@ serve_dhcp_discover (dhcp_msg *request, dhcp_msg *reply)
 		return 0;
 	    }
 
-	    log_info("Offer %s to %s, %s status %sexpired",
+	    log_info("Offer 3: %s to %s, %s status %sexpired",
 		     str_ip(binding->address), str_mac(request->hdr.chaddr),
 		     str_status(binding->status),
 		     binding->binding_time + binding->lease_time < time(NULL) ? "" : "not ");
 	    
-	    if (binding->binding_time + binding->lease_time < time(NULL)) {
+	    if (binding->binding_time + binding->lease_time < time(NULL) || binding->status == RELEASED ) {
 		binding->status = PENDING;
 		binding->binding_time = time(NULL);
 		binding->lease_time = pool.pending_time;

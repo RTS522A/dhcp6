@@ -163,7 +163,8 @@ new_dynamic_binding (binding_list *list, pool_indexes *indexes, uint32_t address
 	else { // search any previously assigned address which is expired
     
 	    LIST_FOREACH_SAFE(binding, list, pointers, binding_temp) {
-		if(!binding->is_static &&
+		if(!binding->is_static && 
+		   found_binding != NULL &&
 		   found_binding->status != PENDING &&
 		   found_binding->status != ASSOCIATED)
 		    return binding;
