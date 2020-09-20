@@ -31,10 +31,10 @@ Fork Update
 -------
 Sep. 2020  Zhao Zhigang (zzg2005)
 
-Added support for compatible with Dhclient and Dhcpstarv based on the current framework. 
-
-Modified the bug that exists when DHCP resources are used up.
-
-Added a launch_rogueserver.sh , that used to set up a Rogue dhcp server easily for testing purpose, and can provide the fake setting such as Gateway, DNS, and domain name.
+- Added support for compatible with Dhclient and Dhcpstarv based on the current framework. 
+- Modified the bug that show 'expired' status for the initializing DHCP resource.
+- Modified the bug that exists when reusing DHCP released resources.
+- Modified the bug that exists when DHCP resources are used up.
+- Added a launch_rogueserver.sh , that used to set up a Rogue dhcp server easily for testing purpose, and can provide the fake setting such as Gateway, DNS, and domain name.
 
 

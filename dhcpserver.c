@@ -325,6 +325,11 @@ serve_dhcp_discover (dhcp_msg *request, dhcp_msg *reply)
 
     if (binding) { // a static binding has been configured for this client
 
+        if (binding->status == EMPTY ) {
+            binding->binding_time = time(NULL);
+            binding->lease_time = pool.pending_time;
+	    }
+        
         log_info("Offer 1: %s to %s (static), %s status %sexpired",
                  str_ip(binding->address), str_mac(request->hdr.chaddr),
                  str_status(binding->status),
@@ -355,6 +360,11 @@ serve_dhcp_discover (dhcp_msg *request, dhcp_msg *reply)
             /* The client's previous address as recorded in the client's (now
                expired or released) binding, if that address is in the server's
                pool of available addresses and not already allocated, ELSE */
+
+        if (binding->status == EMPTY ) {
+            binding->binding_time = time(NULL);
+            binding->lease_time = pool.pending_time;
+	    }
 
 	    log_info("Offer 2:%s to %s, %s status %sexpired",
 		     str_ip(binding->address), str_mac(request->hdr.chaddr),
@@ -394,6 +404,11 @@ serve_dhcp_discover (dhcp_msg *request, dhcp_msg *reply)
 			 str_mac(request->hdr.chaddr));
 		
 		return 0;
+	    }
+
+        if (binding->status == EMPTY ) {
+            binding->binding_time = time(NULL);
+            binding->lease_time = pool.pending_time;
 	    }
 
 	    log_info("Offer 3: %s to %s, %s status %sexpired",
