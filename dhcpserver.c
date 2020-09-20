@@ -325,15 +325,18 @@ serve_dhcp_discover (dhcp_msg *request, dhcp_msg *reply)
 
     if (binding) { // a static binding has been configured for this client
 
-        if (binding->status == EMPTY ) {
-            binding->binding_time = time(NULL);
-            binding->lease_time = pool.pending_time;
+	    if (binding->status == EMPTY ) {
+	    log_info("Offer 1: %s to %s, %s status",
+		     str_ip(binding->address), str_mac(request->hdr.chaddr),
+		     str_status(binding->status));
 	    }
-        
-        log_info("Offer 1: %s to %s (static), %s status %sexpired",
-                 str_ip(binding->address), str_mac(request->hdr.chaddr),
-                 str_status(binding->status),
-                 binding->binding_time + binding->lease_time < time(NULL) ? "" : "not ");
+        else
+        {
+	    log_info("Offer 1: %s to %s, %s status %sexpired",
+		     str_ip(binding->address), str_mac(request->hdr.chaddr),
+		     str_status(binding->status),
+		     binding->binding_time + binding->lease_time < time(NULL) ? "" : "not ");
+        }
             
         if (binding->binding_time + binding->lease_time < time(NULL) || binding->status == RELEASED ) {
 	    binding->status = PENDING;
@@ -361,15 +364,18 @@ serve_dhcp_discover (dhcp_msg *request, dhcp_msg *reply)
                expired or released) binding, if that address is in the server's
                pool of available addresses and not already allocated, ELSE */
 
-        if (binding->status == EMPTY ) {
-            binding->binding_time = time(NULL);
-            binding->lease_time = pool.pending_time;
+	    if (binding->status == EMPTY ) {
+	    log_info("Offer 2: %s to %s, %s status",
+		     str_ip(binding->address), str_mac(request->hdr.chaddr),
+		     str_status(binding->status));
 	    }
-
-	    log_info("Offer 2:%s to %s, %s status %sexpired",
+        else
+        {
+	    log_info("Offer 2: %s to %s, %s status %sexpired",
 		     str_ip(binding->address), str_mac(request->hdr.chaddr),
 		     str_status(binding->status),
 		     binding->binding_time + binding->lease_time < time(NULL) ? "" : "not ");
+        }
 
 	    if (binding->binding_time + binding->lease_time < time(NULL) || binding->status == RELEASED  ) {
 		binding->status = PENDING;
@@ -406,15 +412,18 @@ serve_dhcp_discover (dhcp_msg *request, dhcp_msg *reply)
 		return 0;
 	    }
 
-        if (binding->status == EMPTY ) {
-            binding->binding_time = time(NULL);
-            binding->lease_time = pool.pending_time;
+	    if (binding->status == EMPTY ) {
+	    log_info("Offer 3: %s to %s, %s status",
+		     str_ip(binding->address), str_mac(request->hdr.chaddr),
+		     str_status(binding->status));
 	    }
-
+        else
+        {
 	    log_info("Offer 3: %s to %s, %s status %sexpired",
 		     str_ip(binding->address), str_mac(request->hdr.chaddr),
 		     str_status(binding->status),
 		     binding->binding_time + binding->lease_time < time(NULL) ? "" : "not ");
+        }
 	    
 	    if (binding->binding_time + binding->lease_time < time(NULL) || binding->status == RELEASED ) {
 		binding->status = PENDING;
